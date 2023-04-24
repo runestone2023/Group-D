@@ -33,7 +33,7 @@ turn_ratemod = 20
 # Write your program here.
 
 # Init socket
-HOST = "10.42.0.1"  # Standard loopback interface address (localhost)
+HOST = "10.42.0.1"  # Address of server running backend API
 PORT = 65432  # Port to listen on (non-privileged ports are > 1023)
 
 addr = socket.getaddrinfo(HOST, PORT)[0][-1]
