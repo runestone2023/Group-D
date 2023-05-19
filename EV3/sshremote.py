@@ -2,7 +2,7 @@
 # This is a standalone script that can be run on the EV3 Brick via SSH.
 from pybricks.ev3devices import ColorSensor, Motor
 from pybricks.hubs import EV3Brick
-from pybricks.parameters import Port
+from pybricks.parameters import Port, Direction
 from pybricks.robotics import DriveBase
 
 # Initialize the EV3 Brick, Motors and Sensors
@@ -11,6 +11,7 @@ left_motor = Motor(port=Port.A)
 right_motor = Motor(port=Port.D)
 drill_motor = Motor(port=Port.C)
 color_sensor = ColorSensor(port=Port.S3)
+gripping_motor = Motor(port=Port.B, positive_direction=Direction.COUNTERCLOCKWISE)
 
 left_motor.control.limits(acceleration=1000)
 left_motor.control.limits(acceleration=1000)
@@ -22,6 +23,7 @@ robot = DriveBase(left_motor, right_motor, wheel_diameter=35, axle_track=192.5)
 speedmod = 100
 turn_ratemod = 30
 drillspeed = 99999
+grabspeed = 400
 
 # Control the robot with user input from the terminal
 print("Use the following keys to control the robot:")
@@ -32,6 +34,8 @@ print("d: turn right")
 print("b: beep")
 print("r: toggle drill")
 print("f: read color data")
+print("g: grab")
+print("h: release")
 print("q: quit")
 
 ev3.speaker.beep()
@@ -61,6 +65,10 @@ while True:
         color = color_sensor.color()
         print(color)
         ev3.speaker.say(str(color))
+    elif command == "g":
+        gripping_motor.run(grabspeed if gripping_motor.speed() == 0 else 0)
+    elif command == "h":
+        gripping_motor.run(-grabspeed if gripping_motor.speed() == 0 else 0)
     elif command == "q":
         break
     else:
