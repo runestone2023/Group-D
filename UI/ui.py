@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import *
 from tkinter import ttk, messagebox
 from PIL import Image, ImageTk
+from urllib import request
 import os
 import urllib.request
 import cv2
@@ -12,6 +13,7 @@ class App(Frame):
 
     # Define __init__ method
     def __init__(self, parent):
+        self.backend_host = os.environ.get('BACKEND_HOST') or '127.0.0.1:8000'
         Frame.__init__(self, parent)
         self.parent=parent
         self.cap = cv2.VideoCapture("http://10.6.216.171:8080/video")
@@ -26,7 +28,7 @@ class App(Frame):
         parent.bind("r", lambda event: self.press_r())
         parent.bind("f", lambda event: self.press_f())
         parent.bind("g", lambda event: self.press_g())
-        parent.bind("h", lambda event: self.press_h())
+        parent.bind("e", lambda event: self.press_e())
         parent.bind("q", lambda event: check_exit())
 
     # Define initUI method for creating widgets on window
@@ -150,7 +152,7 @@ class App(Frame):
         release_button_image = ImageTk.PhotoImage(release_button_open)
         release_button_label =Label(image=release_button_image, bg="white")
         release_button_label.image = release_button_image
-        release_button = Button(controller_zone, command=self.press_h, image=release_button_image, height=50, width=50).grid(row=2, column=6)
+        release_button = Button(controller_zone, command=self.press_e, image=release_button_image, height=50, width=50).grid(row=2, column=6)
 
         # Create "Exit" button
         exit_button_path = os.path.abspath("Assets/Exit_Icon.png")
@@ -214,43 +216,53 @@ class App(Frame):
 # Event when press "a" key
     def press_a(parent):
         print("a")
+        request.urlopen(f"http://{parent.backend_host}/left")
 
 # Event when press "w" key
     def press_w(parent):
         print("w")
+        request.urlopen(f"http://{parent.backend_host}/forward")
 
 # Event when press "s" key
     def press_s(parent):
         print("s")
+        request.urlopen(f"http://{parent.backend_host}/backward")
 
 # Event when press "d" key
     def press_d(parent):
         print("d")
+        request.urlopen(f"http://{parent.backend_host}/right")
 
 # Event when press "b" key
     def press_b(parent):
         print("b")
+        request.urlopen(f"http://{parent.backend_host}/beep")
 
 # Event when press "r" key
     def press_r(parent):
         print("r")
+        request.urlopen(f"http://{parent.backend_host}/release")
 
 # Event when press "f" key
     def press_f(parent):
         print("f")
+        request.urlopen(f"http://{parent.backend_host}/color")
 
 # Event when press "g" key
     def press_g(parent):
         print("g")
+        request.urlopen(f"http://{parent.backend_host}/grab")
 
-# Event when press "h" key
-    def press_h(parent):
-        print("h")
+# Event when press "e" key
+    def press_e(parent):
+        print("e")
+        request.urlopen(f"http://{parent.backend_host}/drill")
 
 # Define check_exit method for checking exit
 def check_exit():
     if messagebox.askokcancel("Exit", "Do you want to exit?"):
         window.quit()
+        request.urlopen(f"http://{os.environ.get('BACKEND_HOST') or '127.0.0.1:8000'}/quit")
 # Create app window
 window = Tk()
 window.title("MineBot Controller")
