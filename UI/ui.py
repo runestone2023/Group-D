@@ -3,6 +3,9 @@ from tkinter import *
 from tkinter import ttk, messagebox
 from PIL import Image, ImageTk
 import os
+import urllib.request
+import cv2
+import numpy as np
 
 # Define App class
 class App(Frame):
@@ -11,7 +14,10 @@ class App(Frame):
     def __init__(self, parent):
         Frame.__init__(self, parent)
         self.parent=parent
+        self.cap = cv2.VideoCapture("http://10.6.216.171:8080/video")
+        self.bg = "#f2f2f2"
         self.initUI()
+        self.update_camera_frame()
         parent.bind("a", lambda event: self.press_a())
         parent.bind("w", lambda event: self.press_w())
         parent.bind("s", lambda event: self.press_s())
@@ -47,11 +53,11 @@ class App(Frame):
         bg_tab_controller_label.place(x=0, y=0, relheight=1, relwidth=1)
 
         # Frame of Controller Zone in tab Controller
-        controller_zone = tk.Frame(tab_controller, height=240, bg="grey")
+        controller_zone = tk.Frame(tab_controller, height=240, bg=self.bg)
         controller_zone.pack(fill=tk.BOTH, side=tk.BOTTOM, expand=FALSE)
 
         # Frame of Observation Zone (maybe show data from camera sensor) in tab Controller
-        observation_zone = tk.Frame(tab_controller, height=480, bg="white")
+        observation_zone = tk.Frame(tab_controller, height=480, bg="black")
         observation_zone.pack(fill=tk.BOTH, side=tk.BOTTOM, expand=TRUE)
 
         # Frame of tab Analysis
@@ -155,16 +161,55 @@ class App(Frame):
         exit_button = Button(controller_zone, command=check_exit, image=exit_button_image, height=50, width=50).grid(row=2, column=8)
 
         # Button description
-        beep_text_label = Label(controller_zone, text="Beep", bg="grey").grid(row=0, column=3, sticky=E)
-        drill_text_label = Label(controller_zone, text="Toggle Drill", bg="grey").grid(row=0, column=5, sticky=E)
-        scan_text_label = Label(controller_zone, text="Read Color Data", bg="grey").grid(row=0, column=7, sticky=E)
-        grab_text_label = Label(controller_zone, text="Grab", bg="grey").grid(row=2, column=3, sticky=E)
-        release_text_label = Label(controller_zone, text="Release", bg="grey").grid(row=2, column=5, sticky=E)
-        exit_text_label = Label(controller_zone, text="Exit", bg="grey").grid(row=2, column=7, sticky=E)
+        beep_text_label = Label(controller_zone, text="Beep", bg=self.bg).grid(row=0, column=3, sticky=E)
+        drill_text_label = Label(controller_zone, text="Toggle Drill", bg=self.bg).grid(row=0, column=5, sticky=E)
+        scan_text_label = Label(controller_zone, text="Read Color Data", bg=self.bg).grid(row=0, column=7, sticky=E)
+        grab_text_label = Label(controller_zone, text="Grab", bg=self.bg).grid(row=2, column=3, sticky=E)
+        release_text_label = Label(controller_zone, text="Release", bg=self.bg).grid(row=2, column=5, sticky=E)
+        exit_text_label = Label(controller_zone, text="Exit", bg=self.bg).grid(row=2, column=7, sticky=E)
 
-        # Label for Notice
-        notice_label = Label(observation_zone,text="Add screen of camera sensor here!", font="bold", justify="center", bg="white")
-        notice_label.pack(fill=BOTH, side=TOP, expand=TRUE)
+        # Camera label
+        self.camera = Label(observation_zone,text="Camera could not be loaded!", font="bold", justify="center", bg="white")
+        self.camera.pack(fill=BOTH, side=TOP, expand=TRUE)
+
+        drill_button_path = os.path.abspath("Assets/Drill_Icon.png")
+        drill_button_open = Image.open(drill_button_path).resize((50,50))
+        drill_button_image = ImageTk.PhotoImage(drill_button_open)
+        drill_button_label =Label(image=drill_button_image, bg="white")
+        drill_button_label.image = drill_button_image
+
+    def update_camera_frame(self):
+        ret, frame = self.cap.read()
+        if ret:
+            frame = self.resize_and_pad_camera(frame)
+            # Convert the frame to PIL image
+            image = Image.fromarray(frame)
+            # Convert the PIL image to tkinter image
+            photo = ImageTk.PhotoImage(image)
+            # Display the image on the camera widget
+            self.camera.configure(image=photo)
+            self.camera.image = photo
+
+        window.after(10, self.update_camera_frame)
+    
+    # This function is used to display the proper video feed
+    def resize_and_pad_camera(self, img):
+        # Calculate the aspect ratio
+        h, w = img.shape[:2]
+        aspect = h / w
+
+        # Resize by width
+        new_w = 1000
+        new_h = int(new_w * aspect)
+        resized = cv2.resize(img, (new_w, new_h), interpolation=cv2.INTER_LINEAR)
+
+        # Add padding
+        top = bottom = round((1000 - new_h) / 2)
+        left = right = 0
+        color = [0, 0, 0] 
+        padded = cv2.copyMakeBorder(resized, top, bottom, left, right, cv2.BORDER_CONSTANT, value=color)
+
+        return padded
 
 # Event when press "a" key
     def press_a(parent):
@@ -208,8 +253,7 @@ def check_exit():
         window.quit()
 # Create app window
 window = Tk()
-window.title("Minesweeper Controller")
-window.geometry("1280x710")
+window.title("MineBot Controller")
 window.protocol("WM_DELETE_WINDOW", check_exit)
 app = App(window)
 window.mainloop()
