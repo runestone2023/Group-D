@@ -16,7 +16,7 @@ class App(Frame):
         self.backend_host = os.environ.get('BACKEND_HOST') or '127.0.0.1:8000'
         Frame.__init__(self, parent)
         self.parent=parent
-        self.cap = cv2.VideoCapture("http://10.6.216.171:8080/video")
+        self.cap = cv2.VideoCapture(f"http://{os.environ.get('CAMERA_HOST') or '10.6.216.171:8080'}/video")
         self.bg = "#f2f2f2"
         self.initUI()
         self.update_camera_frame()
