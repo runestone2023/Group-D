@@ -47,9 +47,36 @@ sock.connect(addr)
 
 # ev3.speaker.beep()
 
+# Initialize the gripper.
+gripping_motor.run_until_stalled(grabspeed, Stop.COAST, 30)
+# gripping_motor.reset_angle(0)
+gripping_motor.run_time(-grabspeed, 3000)
+
 while True:
     data = sock.recv(1024)
-    print(str(data, 'utf8)'), end='')
     datastr = str(data, 'utf8')
-    if datastr == 'drive':
+    print(datastr)
+    if datastr == 'forward':
         robot.straight(50)
+    elif datastr == 'backward':
+        robot.straight(-50)
+    elif datastr == 'left':
+        robot.turn(45)
+    elif datastr == 'right':
+        robot.turn(-45)
+    elif datastr == 'beep':
+        ev3.speaker.beep()
+    elif datastr == 'drill':
+        drill_motor.run(drillspeed if drill_motor.speed() == 0 else 0)
+    elif datastr == 'color':
+        color = color_sensor.color()
+        print(color)
+        ev3.speaker.say(str(color))
+    elif datastr == 'grab':
+        gripping_motor.run_until_stalled(grabspeed, Stop.COAST, 30)
+    elif datastr == 'release':
+        gripping_motor.run_time(-grabspeed, 3000)
+    elif datastr == 'quit':
+        break
+    else:
+        print("Invalid command: " + datastr)
