@@ -15,10 +15,13 @@ from pybricks.tools import DataLog, StopWatch, wait
 
 # Create your objects here.
 
-# Initialize the EV3 Brick and Motors
+# Initialize the EV3 Brick, Motors and Sensors
 ev3 = EV3Brick()
 left_motor = Motor(port=Port.A)
-right_motor = Motor(port=Port.C)
+right_motor = Motor(port=Port.D)
+drill_motor = Motor(port=Port.C)
+color_sensor = ColorSensor(port=Port.S3)
+gripping_motor = Motor(port=Port.B, positive_direction=Direction.COUNTERCLOCKWISE)
 
 left_motor.control.limits(acceleration=1000)
 left_motor.control.limits(acceleration=1000)
@@ -27,8 +30,10 @@ left_motor.control.limits(acceleration=1000)
 robot = DriveBase(left_motor, right_motor, wheel_diameter=35, axle_track=192.5)
 
 # Set the speed and turn rate of the robot
-speedmod = 50
-turn_ratemod = 20
+speedmod = 100
+turn_ratemod = 30
+drillspeed = 99999
+grabspeed = 400
 
 # Write your program here.
 
@@ -40,7 +45,7 @@ addr = socket.getaddrinfo(HOST, PORT)[0][-1]
 sock = socket.socket()
 sock.connect(addr)
 
-ev3.speaker.beep()
+# ev3.speaker.beep()
 
 while True:
     data = sock.recv(1024)
