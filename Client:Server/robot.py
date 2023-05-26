@@ -1,4 +1,3 @@
-from Client:Server.server import beep
 from Client:Server.server import readcolordata
 from Client:Server.server import toggledrill
 import pyfirmata
@@ -11,7 +10,7 @@ import socket
 board = pyfirmata.Arduino('com4')
 
 
-gaz = 0.5
+value = 0.5
 
 left_forw = board.get_pin('d:3:p')
 left_back = board.get_pin('d:5:p')
@@ -26,28 +25,28 @@ def stop():
 	right_back.write(0)
 
 def right():
-	left_forw.write(gaz)
+	left_forw.write(value)
 	left_back.write(0)
 	right_forw.write(0)
-	right_back.write(gaz)
+	right_back.write(value)
 
 
 def left():
 	left_forw.write(0)
-	left_back.write(gaz)
-	right_forw.write(gaz)
+	left_back.write(value)
+	right_forw.write(value)
 	right_back.write(0)
 
 def back():
 	left_forw.write(0)
-	left_back.write(gaz)
+	left_back.write(value)
 	right_forw.write(0)
-	right_back.write(gaz)
+	right_back.write(value)
 
 def forward():
-	left_forw.write(gaz)
+	left_forw.write(value)
 	left_back.write(0)
-	right_forw.write(gaz)
+	right_forw.write(value)
 	right_back.write(0)
 
 
@@ -67,7 +66,7 @@ while True:
     data = client. recv(2048) # receive
     print(data.decode("utf-8"))
     print(data)
-   # comandd = data.deccode("utf-8")
+   # command = data.deccode("utf-8")
     if(data == b'forward'):
         forward()
     if(data == b'back'):
@@ -83,4 +82,5 @@ while True:
     if(data == b'toggle drill'):
         toggledrill()
     if(data == b'read color data'):
-        readcolordata()                    
+        readcolordata()
+                            

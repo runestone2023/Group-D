@@ -1,4 +1,3 @@
-
 import socket
 import time
 from winsound import Beep
@@ -35,7 +34,7 @@ def left():
 	user_socket.send("left".encode("utf-8"))
 
 def back():
-	user_socket.send("backward".encode("utf-8"))
+	user_socket.send("back".encode("utf-8"))
 
 def forward():
 	user_socket.send("forward".encode("utf-8"))
