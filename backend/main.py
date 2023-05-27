@@ -26,13 +26,13 @@ def read_root():
 
 @app.get("/forward")
 def forward():
-    conn.sendall(b"forward")
+    conn.sendall(b"forw")
     return
 
 
 @app.get("/backward")
 def backward():
-    conn.sendall(b"backward")
+    conn.sendall(b"back")
     return
 
 
@@ -44,7 +44,7 @@ def left():
 
 @app.get("/right")
 def right():
-    conn.sendall(b"right")
+    conn.sendall(b"righ")
     return
 
 
@@ -56,13 +56,13 @@ def beep():
 
 @app.get("/drill")
 def drill():
-    conn.sendall(b"drill")
+    conn.sendall(b"dril")
     return
 
 
 @app.get("/color")
 def color():
-    conn.sendall(b"color")
+    conn.sendall(b"colo")
     return
 
 
@@ -74,7 +74,7 @@ def grab():
 
 @app.get("/release")
 def release():
-    conn.sendall(b"release")
+    conn.sendall(b"rele")
     return
 
 
