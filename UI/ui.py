@@ -26,7 +26,7 @@ class App(Frame):
         parent.bind("d", lambda event: self.press_d())
         parent.bind("b", lambda event: self.press_b())
         parent.bind("r", lambda event: self.press_r())
-        parent.bind("f", lambda event: self.press_f())
+        parent.bind("c", lambda event: self.press_c())
         parent.bind("g", lambda event: self.press_g())
         parent.bind("e", lambda event: self.press_e())
         parent.bind("q", lambda event: check_exit())
@@ -136,7 +136,7 @@ class App(Frame):
         scan_button_image = ImageTk.PhotoImage(scan_button_open)
         scan_button_label =Label(image=scan_button_image, bg="white")
         scan_button_label.image = scan_button_image
-        scan_button = Button(controller_zone, command=self.press_f, image=scan_button_image, height=50, width=50).grid(row=0, column=8)
+        scan_button = Button(controller_zone, command=self.press_c, image=scan_button_image, height=50, width=50).grid(row=0, column=8)
 
         # Create "Grab" button
         grab_button_path = os.path.abspath("Assets/Grab_Icon.png")
@@ -244,8 +244,8 @@ class App(Frame):
         request.urlopen(f"http://{parent.backend_host}/release")
 
 # Event when press "f" key
-    def press_f(parent):
-        print("f")
+    def press_c(parent):
+        print("c")
         request.urlopen(f"http://{parent.backend_host}/color")
 
 # Event when press "g" key
