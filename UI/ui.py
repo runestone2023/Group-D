@@ -16,7 +16,8 @@ class App(Frame):
         self.backend_host = os.environ.get('BACKEND_HOST') or '127.0.0.1:8000'
         Frame.__init__(self, parent)
         self.parent=parent
-        self.cap = cv2.VideoCapture(f"http://{os.environ.get('CAMERA_HOST') or '10.6.216.171:8080'}/video")
+        self.cap1 = cv2.VideoCapture(f"http://{os.environ.get('CAMERA_HOST1') or '192.168.0.12:8080'}/video")
+        self.cap2 = cv2.VideoCapture(f"http://{os.environ.get('CAMERA_HOST2') or '192.168.0.212:8080'}/video")
         self.bg = "#f2f2f2"
         self.initUI()
         self.update_camera_frame()
@@ -171,8 +172,10 @@ class App(Frame):
         exit_text_label = Label(controller_zone, text="Exit", bg=self.bg).grid(row=2, column=7, sticky=E)
 
         # Camera label
-        self.camera = Label(observation_zone,text="Camera could not be loaded!", font="bold", justify="center", bg="white")
-        self.camera.pack(fill=BOTH, side=TOP, expand=TRUE)
+        self.camera1 = Label(observation_zone,text="Camera could not be loaded!", font="bold", justify="center", bg="white")
+        self.camera1.pack(fill=BOTH, side=LEFT, expand=TRUE)
+        self.camera2 = Label(observation_zone,text="Camera could not be loaded!", font="bold", justify="center", bg="white")
+        self.camera2.pack(fill=BOTH, side=LEFT, expand=TRUE)
 
         drill_button_path = os.path.abspath("Assets/Drill_Icon.png")
         drill_button_open = Image.open(drill_button_path).resize((50,50))
@@ -181,7 +184,12 @@ class App(Frame):
         drill_button_label.image = drill_button_image
 
     def update_camera_frame(self):
-        ret, frame = self.cap.read()
+        self.update_camera_frame_help(self.camera1, self.cap1)
+        self.update_camera_frame_help(self.camera2, self.cap2)
+        window.after(1, self.update_camera_frame)
+
+    def update_camera_frame_help(self, camera, cap):
+        ret, frame = cap.read()
         if ret:
             frame = self.resize_and_pad_camera(frame)
             # Convert the frame to PIL image
@@ -189,25 +197,24 @@ class App(Frame):
             # Convert the PIL image to tkinter image
             photo = ImageTk.PhotoImage(image)
             # Display the image on the camera widget
-            self.camera.configure(image=photo)
-            self.camera.image = photo
+            camera.configure(image=photo)
+            camera.image = photo
 
-        window.after(10, self.update_camera_frame)
     
     # This function is used to display the proper video feed
     def resize_and_pad_camera(self, img):
         # Calculate the aspect ratio
         h, w = img.shape[:2]
-        aspect = h / w
+        aspect = w / h
 
-        # Resize by width
-        new_w = 1000
-        new_h = int(new_w * aspect)
+        # Resize by height
+        new_h = 1000
+        new_w = int(new_h * aspect)
         resized = cv2.resize(img, (new_w, new_h), interpolation=cv2.INTER_LINEAR)
 
         # Add padding
-        top = bottom = round((1000 - new_h) / 2)
-        left = right = 0
+        left = right = round((1000 - new_w) / 2)
+        top = bottom = 0
         color = [0, 0, 0] 
         padded = cv2.copyMakeBorder(resized, top, bottom, left, right, cv2.BORDER_CONSTANT, value=color)
 
