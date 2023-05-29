@@ -1,5 +1,4 @@
-from Client:Server.server import readcolordata
-from Client:Server.server import toggledrill
+from winsound import Beep
 import pyfirmata
 import time
 import keyboard
@@ -63,7 +62,7 @@ client. connect(
   ("192.168.1.67", 1234)
 )  
 while True:
-    data = client. recv(2048) # receive
+    data = client.recv(2048) # receive
     print(data.decode("utf-8"))
     print(data)
    # command = data.deccode("utf-8")
@@ -78,7 +77,7 @@ while True:
     if(data == b'stop'):
         stop()
     if(data == b'beep'):
-        beep()  
+        Beep()  
     if(data == b'toggle drill'):
         toggledrill()
     if(data == b'read color data'):
